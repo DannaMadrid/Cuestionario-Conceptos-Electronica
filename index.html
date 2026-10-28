@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ElectroLab: Misión Electrónica</title>
+<style>
+:root{--bg:#10294a;--pn:#173760;--pn2:#1f4778;--ink:#eaf1fb;--mu:#a9bdd8;--cu:#f0a05a;--ok:#6fe0a0;--bad:#ff8c8c;--ln:#3f68a0;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Segoe UI",system-ui,sans-serif;background-image:linear-gradient(#ffffff0a 1px,transparent 1px),linear-gradient(90deg,#ffffff0a 1px,transparent 1px);background-size:28px 28px}
+main,header,footer,section{max-width:980px;margin:0 auto;padding:20px}
+h1,h2,h3{line-height:1.2;margin:.2em 0 .5em}h1{font-size:clamp(2rem,6vw,3.4rem)}
+.mono,code{font-family:Consolas,"Cascadia Code",monospace}
+.hero{display:grid;gap:24px;grid-template-columns:1.1fr .9fr;align-items:center;padding-top:48px}
+@media(max-width:760px){.hero{grid-template-columns:1fr}}
+.btn{background:var(--cu);color:#1b1206;border:0;border-radius:6px;padding:10px 18px;font:600 1rem inherit;cursor:pointer}
+.btn.g{background:transparent;color:var(--ink);border:1px solid var(--ln)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+:focus-visible{outline:3px solid var(--cu);outline-offset:2px}
+.card{background:var(--pn);border:1px solid var(--ln);border-radius:10px;padding:18px;margin:14px 0}
+.nav{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.nav button{width:38px;height:38px;border-radius:50%;border:1px solid var(--ln);background:var(--pn);color:var(--ink);cursor:pointer;font-weight:600}
+.nav button.cur{border-color:var(--cu);box-shadow:0 0 0 2px var(--cu)}.nav button.done{background:var(--pn2);border-color:var(--ok)}
+.bar{height:6px;background:var(--pn);border-radius:3px;overflow:hidden}.bar i{display:block;height:100%;background:var(--cu);transition:width .4s}
+select,input[type=text],input[type=number],textarea{background:#0c1f39;color:var(--ink);border:1px solid var(--ln);border-radius:6px;padding:7px;font:inherit;max-width:100%}
+textarea{width:100%}
+label.o{display:block;padding:9px 12px;margin:6px 0;border:1px solid var(--ln);border-radius:8px;cursor:pointer}
+label.o:has(input:checked){border-color:var(--cu);background:var(--pn2)}
+.fb{border-left:4px solid var(--cu);padding:8px 12px;margin-top:12px;background:#0c1f39;border-radius:0 8px 8px 0}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.mu{color:var(--mu)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0}
+.map{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:700px){.map{grid-template-columns:1fr 1fr}}
+.nd{border:1px solid var(--ln);border-radius:8px;padding:8px;text-align:center;background:#0c1f39}
+.nd select{width:100%;margin-top:6px}
+.fuente{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media(max-width:700px){.fuente{grid-template-columns:1fr 1fr}}
+.pers{display:grid;grid-template-columns:1fr 1fr;gap:8px}@media(max-width:600px){.pers{grid-template-columns:1fr}}
+.lock{opacity:.4;pointer-events:none}
+table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--ln);padding:6px;text-align:left;vertical-align:top}
+[contenteditable]{border-bottom:1px dashed var(--cu);padding:0 4px}
+a{color:var(--cu)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@keyframes fl{to{stroke-dashoffset:-40}}.flow{stroke-dasharray:6 10;animation:fl 1.6s linear infinite}
+</style></head><body>
+<header class="hero">
+<div>
+<p class="mu">Fundamentos del Internet de las Cosas · Tema 2</p>
+<h1>ElectroLab: Misión Electrónica</h1>
+<p>Diez actividades para repasar conceptos básicos de electrónica: ley de Ohm, potencia, código de colores, componentes, fuentes de alimentación y divisores. Resuelve, comprueba y escapa del laboratorio.</p>
+<button class="btn" id="go">Comenzar la misión</button>
+</div>
+<svg viewBox="0 0 320 220" role="img" aria-label="Circuito con batería, resistencia y LED">
+<g fill="none" stroke="#f0a05a" stroke-width="3"><path class="flow" d="M40 40H280V180H40Z"/></g>
+<rect x="120" y="28" width="80" height="24" rx="4" fill="#173760" stroke="#6fe0a0" stroke-width="2"/>
+<text x="160" y="45" fill="#eaf1fb" font-size="13" text-anchor="middle">R = 1 kΩ</text>
+<rect x="26" y="90" width="28" height="40" fill="#173760" stroke="#eaf1fb" stroke-width="2"/><text x="40" y="115" fill="#eaf1fb" font-size="12" text-anchor="middle">9 V</text>
+<circle cx="280" cy="110" r="16" fill="#f0a05a"/><text x="160" y="205" fill="#a9bdd8" font-size="12" text-anchor="middle">I = V / R = 9 mA</text>
+</svg>
+</header>
+<section class="card" id="gate"><h2>Antes de empezar</h2><p>Escribe tu nombre. Tu puntaje y tus respuestas se guardarán para fines académicos; solo tú y la docente podrán verlos. No pedimos otros datos personales.</p><div class="row"><input type="text" id="nm" maxlength="80" placeholder="Nombre y apellido" aria-label="Nombre" autocomplete="name" onkeydown="if(event.key=='Enter')start()"><button class="btn" id="start">Entrar al laboratorio</button></div><p class="bad" id="ne" role="alert"></p></section>
+<main id="lab" hidden>
+<section class="card"><h2>Objetivos de aprendizaje</h2>
+<p>Al terminar podrás: aplicar V = I·R y P = V·I; leer el código de colores; distinguir resistencias, condensadores, bobinas, diodos, transistores, relés y optoacopladores; identificar las etapas de una fuente lineal; y calcular divisores de voltaje y de corriente.</p></section>
+<div class="card">
+<div class="row"><b id="who"></b><b id="prog">0 / 10 comprobadas</b><span class="mu">Modo: <b id="mode">evaluación</b></span></div>
+<div class="bar"><i id="pb" style="width:0"></i></div>
+<nav class="nav" id="nav" aria-label="Preguntas"></nav>
+<div id="q"></div>
+<div class="row"><button class="btn g" id="prev">Anterior</button><button class="btn" id="chk">Comprobar</button><button class="btn g" id="next">Siguiente</button><button class="btn g" id="fin">Ver resultados</button></div>
+</div>
+<section id="res"></section>
+</main>
+<section class="card"><h2>Reglas de puntuación</h2>
+<p>Cada pregunta vale 1 punto (total 10). Hay crédito parcial por elemento acertado. En el escape room cada pista usada descuenta 0,03 puntos. Una pregunta comprobada ya no se puede cambiar; para intentarlo de nuevo, reinicia el cuestionario. En la pregunta 10, el mensaje y la autoevaluación se valoran por completitud; la docente puede revisar su calidad.</p></section>
+<section class="card"><h2>Fórmulas y conceptos clave</h2>
+<table><tr><td>Ley de Ohm</td><td class="mono">V = I · R</td></tr><tr><td>Potencia</td><td class="mono">P = V · I = I²R = V²/R</td></tr><tr><td>Divisor de voltaje</td><td class="mono">V<sub>out</sub> = V<sub>in</sub> · R₂/(R₁+R₂)</td></tr><tr><td>Divisor de corriente</td><td class="mono">I₁ = I<sub>s</sub> · R₂/(R₁+R₂); I₂ = I<sub>s</sub> · R₁/(R₁+R₂)</td></tr><tr><td>Código de colores</td><td>negro 0, café 1, rojo 2, naranja 3, amarillo 4, verde 5, azul 6, violeta 7, gris 8, blanco 9; dorado ±5 %, plateado ±10 % (IEC 60062)</td></tr><tr><td>CC en régimen estacionario</td><td>condensador = circuito abierto; bobina = corto circuito</td></tr></table>
+<p class="mu">Relación con IoT: los sensores y actuadores de un sistema IoT se alimentan, se acondicionan y se protegen con estos mismos componentes.</p></section>
+<section class="card"><h2>Bibliografía (APA 7)</h2>
+<p><b>Fuentes externas</b> (datos editoriales por confirmar contra el ejemplar antes de entregar; no se pudieron verificar en línea en esta sesión):</p>
+<ul>
+<li>Alexander, C. K., &amp; Sadiku, M. N. O. (2021). <i>Fundamentals of electric circuits</i> (7.ª ed.). McGraw-Hill Education. — Ley de Ohm, potencia, divisores, condensadores y bobinas.</li>
+<li>Boylestad, R. L., &amp; Nashelsky, L. (2013). <i>Electronic devices and circuit theory</i> (11.ª ed.). Pearson. — Diodos, transistores, rectificación, filtrado y reguladores.</li>
+<li>International Electrotechnical Commission. (s. f.). <i>IEC 60062: Marking codes for resistors and capacitors</i>. — Código de colores y tolerancias (confirmar año de la edición vigente).</li>
+<li>Texas Instruments. (s. f.). <i>LM317 3-terminal adjustable regulator</i> [Hoja de datos]. — Estabilizador de la pregunta 8.</li></ul>
+<p><b>Material del equipo:</b> cuestionario «Conceptos básicos de electrónica» y presentación de los compañeros (preguntas, respuestas y procedimientos).</p></section>
+<footer class="card"><h2>Créditos académicos</h2>
+<p>Integrantes: <span contenteditable>Karen Naghelly Moreno Ortiz, Camila Giraldo Cañon, Miguel Angel Rojas Pardo, Michel Dahiana Arenas López, Danna Alexandra Madrid Roa</span></p>
+<p>Docente: <span contenteditable>Diana Rocio Varon Serna</span></p>
+<p>Institución: <span contenteditable>Universidad de Caldas, Facultad de Inteligencia Artificial e Ingenierías, Departamento de Sistemas e Informática</span></p>
+<p>Asignatura: <span contenteditable>Fundamentos del Internet de las Cosas</span> · Fecha: <span contenteditable>28 de octubre de 2026</span></p></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const T1=[["La unidad de la corriente eléctrica es el amperio, equivalente a un coulomb por segundo (A = C/s).",1,"Correcto: I = Q/t."],["En corriente continua, una bobina se comporta como un circuito abierto.",0,"En régimen estacionario de CC una bobina ideal se comporta como un corto circuito (v = L·di/dt = 0). El condensador es el que actúa como circuito abierto."],["La resistencia de un conductor aumenta proporcionalmente con su longitud.",1,"R = ρ·L/A."],["Los diodos dejan pasar la corriente en ambos sentidos.",0,"Un diodo conduce en polarización directa y bloquea en inversa: un solo sentido."],["En un relé, la bobina hace de electroimán y la conmutación se hace con una señal eléctrica.",1,"Correcto."]];
+const C2=["Resistencia","Condensador","Diodo","Transistor","Optoacoplador"];
+const F2=["Interconecta ópticamente circuitos eléctricamente independientes.","Deja pasar la corriente en un solo sentido.","Se opone al flujo de corriente; su valor se determina con el código de colores.","Se mide en faradios y en CC se comporta como circuito abierto.","Funciona como un grifo: puede amplificar o trabajar en corte y saturación."];
+const A2=[2,3,1,4,0];
+const MC=[
+["Ley de Ohm. Una resistencia de 100 Ω se conecta a una fuente de 12 V. ¿Qué corriente circula por ella?",["1,2 A","8,33 A","0,12 A","1.200 A"],2,"I = V/R = 12 V / 100 Ω = 0,12 A."],
+["Potencia eléctrica. Un dispositivo conectado a 9 V en CC consume 0,5 A. ¿Qué potencia desarrolla?",["4,5 W","18 W","0,055 W","9,5 W"],0,"P = V·I = 9 V × 0,5 A = 4,5 W."],
+["Código de colores. Bandas amarillo – violeta – naranja – dorado. ¿Cuál es su valor?",["4,7 kΩ ± 5 %","47 kΩ ± 5 %","470 kΩ ± 10 %","473 Ω ± 5 %"],1,"Amarillo 4, violeta 7, naranja ×1.000: 47 × 1.000 = 47 kΩ; dorado = ±5 %."],
+["El transistor. En la región de corte se comporta como:",["Un interruptor cerrado: la corriente circula libremente entre colector y emisor.","Un amplificador de la señal que llega a la base.","Un rectificador de la corriente alterna.","Un interruptor abierto: no circula corriente entre colector y emisor."],3,"En corte el transistor no conduce: equivale a un interruptor abierto. (Saturación = interruptor cerrado; región activa = amplificador.)"]];
+const WB=["ohmios","faradios","henrios","amperios","voltios","código de colores","circuito abierto","corto circuito","electroimán"];
+const A7=["ohmios","código de colores","faradios","circuito abierto","henrios","corto circuito","electroimán"];
+const L7=[["Resistencias","se miden en","su valor se determina con el"],["Condensadores","se miden en","en CC se comportan como"],["Bobinas","se miden en","en CC se comportan como"],["Relés","hacen la conmutación con una señal eléctrica","su bobina hace de"]];
+const B8=[["Transformador","—"],["Rectificador","Puente de diodos"],["Filtro","Condensadores y bobinas"],["Estabilizador","LM317 o LM7809"]];
+const N8=["transformador","rectificador","filtro","estabilizador","amplificador"],K8=["puente de diodos","condensadores y bobinas","LM317 o LM7809"];
+const R9=[["Reto 1 · Código de colores. Resistencia con bandas café – negro – rojo – dorado. Dígito = valor en kΩ.",1,"Pista: café=1, negro=0, rojo=×100.","10 × 100 = 1.000 Ω = 1 kΩ"],["Reto 2 · Ley de Ohm. Esa resistencia se conecta a 9 V. Dígito = corriente en mA.",9,"Pista: usa la R del reto 1 en ohmios (1.000 Ω).","I = 9 V / 1.000 Ω = 9 mA"],["Reto 3 · Potencia. Potencia disipada por la resistencia. Dígito = primera cifra de la potencia en mW.",8,"Pista: P = V·I con la I del reto 2 en amperios.","P = 9 V × 0,009 A = 0,081 W = 81 mW"],["Reto 4 · Divisor de voltaje. Fuente 12 V, R₁ = 2 kΩ, R₂ = resistencia del reto 1. Dígito = V_out sobre R₂ en voltios.",4,"Pista: V_out = 12·R₂/(R₁+R₂).","V_out = 12 × 1/(2+1) = 4 V"]];
+const P10=[["Ana","Toda la corriente se va por R1: los electrones siempre van por el camino de menor resistencia.","Error: la corriente se divide entre ambas ramas, no toda va por una. Menor resistencia lleva más corriente, pero no toda."],["Beto","La corriente se reparte igual: la mitad por cada resistencia, porque están conectadas a la misma fuente.","Error: la mitad y mitad solo ocurre si R1 = R2. Aquí R1 ≠ R2."],["Carla","Por R1 pasa más corriente que por R2, pero por R2 también pasa. Las dos tienen el mismo voltaje.","Correcto: en paralelo el voltaje es común y la corriente se reparte en proporción inversa a la resistencia."],["David","Por R2 pasa más corriente: como tiene más resistencia, necesita más corriente para vencerla.","Error: a igual voltaje, más resistencia implica menos corriente (I = V/R)."]];
+const S={cur:0,a:Array.from({length:10},()=>({})),res:Array(10).fill(null),h:Array(10).fill(0),rev:false};
+const v=(i,k)=>S.a[i][k];
+const lk=i=>S.res[i]?" disabled":"";
+const sel=(i,k,opts,ph="Elige…")=>`<select data-k="${k}" aria-label="${k}"${lk(i)}><option value="">${ph}</option>${opts.map((o,n)=>`<option value="${n}"${v(i,k)==n&&v(i,k)!==undefined&&v(i,k)!==""?" selected":""}>${o}</option>`).join("")}</select>`;
+const num=s=>parseFloat(String(s??"").replace(",","."));
+const wave=(t)=>{let p="";for(let x=0;x<=100;x++){let y;const a=x/100*Math.PI*4;
+ if(t=="in")y=Math.sin(a*1.5)*22;else if(t=="a")y=Math.sin(a*1.5)*12;else if(t=="b")y=-Math.abs(Math.sin(a*1.5))*14+7;else if(t=="c")y=-(14-((x*6)%25)*.3)+10;else y=-10;
+ p+=(x?"L":"M")+x+" "+(30-y).toFixed(1)}
+ return `<svg viewBox="0 0 100 60" width="100%" aria-hidden="true"><path d="${p}" fill="none" stroke="#f0a05a" stroke-width="2"/><line x1="0" y1="30" x2="100" y2="30" stroke="#3f68a0" stroke-dasharray="3"/></svg>`};
+const Q=[
+{t:"Falso y verdadero",r(i){return `<p>Marca V o F. Si es falso, escribe la corrección.</p>`+T1.map((s,j)=>`<div class="card"><b>${"ABCDE"[j]}.</b> ${s[0]}<div class="row"><label><input type="radio" name="p1${j}" data-k="v${j}" value="1"${v(i,"v"+j)=="1"?" checked":""}${lk(i)}> Verdadero</label><label><input type="radio" name="p1${j}" data-k="v${j}" value="0"${v(i,"v"+j)=="0"?" checked":""}${lk(i)}> Falso</label></div><textarea rows="2" data-k="c${j}" placeholder="Corrección (si es falso)"${lk(i)}>${v(i,"c"+j)||""}</textarea></div>`).join("")},
+ c(i){let n=0,m=[];T1.forEach((s,j)=>{const x=v(i,"v"+j);const ok=x==s[1];if(ok)n++;m.push(`${"ABCDE"[j]}: <b class="${ok?"ok":"bad"}">${ok?"acierto":(x===undefined?"sin responder":"error")}</b> (es ${s[1]?"V":"F"}). ${s[2]}`)});return{s:n/5,fb:m.join("<br>")}}},
+{t:"Emparejamiento",r(i){return `<p>Relaciona cada componente con su función (menús desplegables: accesible con teclado).</p>`+C2.map((c,j)=>`<div class="row"><b style="min-width:120px">${j+1}. ${c}</b>${sel(i,"m"+j,F2.map((f,n)=>"ABCDE"[n]+". "+f.slice(0,60)+(f.length>60?"…":"")))}</div>`).join("")+`<ul class="mu">${F2.map((f,n)=>`<li><b>${"ABCDE"[n]}.</b> ${f}</li>`).join("")}</ul>`},
+ c(i){let n=0,m=[];C2.forEach((c,j)=>{const ok=v(i,"m"+j)==A2[j];if(ok)n++;m.push(`${c} → ${"ABCDE"[A2[j]]}: <b class="${ok?"ok":"bad"}">${ok?"acierto":"error"}</b>`)});return{s:n/5,fb:m.join("<br>")+"<br>Resistencia: R = V/I. Condensador: C en faradios. Diodo: unidireccional. Transistor: amplifica o conmuta (corte/saturación). Optoacoplador: aislamiento óptico."}}},
+...MC.map((q,k)=>({t:["Ley de Ohm","Potencia eléctrica","Código de colores","El transistor"][k],r(i){return `<p>${q[0]}</p>`+q[1].map((o,n)=>`<label class="o"><input type="radio" name="mc${k}" data-k="o" value="${n}"${v(i,"o")==n?" checked":""}${lk(i)}> ${"abcd"[n]}. ${o}</label>`).join("")},
+ c(i){const ok=v(i,"o")==q[2];return{s:ok?1:0,fb:`<b class="${ok?"ok":"bad"}">${ok?"Correcto":(v(i,"o")===undefined?"Sin responder":"Incorrecto")}.</b> Respuesta: ${"abcd"[q[2]]}. ${q[3]}`}}})),
+{t:"Mapa conceptual",r(i){const wb=WB.map((w,n)=>w);return `<p>Completa [1]–[7] con el banco (sobran dos): <i class="mu">${WB.join(" · ")}</i></p><div class="map">`+L7.map((c,j)=>{const a=j<3?[j*2,j*2+1]:null;return `<div class="nd"><b>${c[0]}</b><div class="mu">${c[1]}</div>`+(a?`${sel(i,"s"+a[0],wb,"["+(a[0]+1)+"]")}<div class="mu">${c[2]}</div>${sel(i,"s"+a[1],wb,"["+(a[1]+1)+"]")}`:`<div><b>señal eléctrica</b></div><div class="mu">${c[2]}</div>${sel(i,"s6",wb,"[7]")}`)+`</div>`}).join("")+`</div>`},
+ c(i){let n=0,m=[];A7.forEach((a,j)=>{const ok=WB[v(i,"s"+j)]==a;if(ok)n++;m.push(`[${j+1}] ${a}: <b class="${ok?"ok":"bad"}">${ok?"acierto":"error"}</b>`)});return{s:n/7,fb:m.join(" · ")+"<br>Sobran: amperios y voltios. La bobina en CC es un corto circuito; el condensador, un circuito abierto."}}},
+{t:"Fuente de alimentación lineal",r(i){return `<p>Cada señal está dibujada bajo su bloque. Nombra los bloques A–D y asigna el componente a B, C y D.</p><div class="mu">Entrada: senoidal de red</div>${wave("in")}<div class="fuente">`+["a","b","c","d"].map((w,j)=>`<div class="nd"><b>Bloque ${"ABCD"[j]}</b>${sel(i,"n"+j,N8,"Nombre")}${j?sel(i,"k"+j,K8,"Componente"):`<div class="mu">sin componente</div>`}${wave(w)}</div>`).join("")+`</div>`},
+ c(i){let n=0,m=[];B8.forEach((b,j)=>{const ok=N8[v(i,"n"+j)]==b[0].toLowerCase();if(ok)n++;let t=`${"ABCD"[j]}: ${b[0]}`;if(j){const k=K8[v(i,"k"+j)]==b[1].replace("P","p").replace("C","c");if(k)n++;t+=` + ${b[1]} <b class="${k?"ok":"bad"}">${k?"✓":"✗"}</b>`}m.push(`${t} <b class="${ok?"ok":"bad"}">${ok?"✓":"✗"}</b>`)});return{s:n/7,fb:m.join("<br>")+"<br>Sobra: amplificador. Transformador reduce amplitud; puente de diodos rectifica; condensadores/bobinas filtran el rizado; LM317/LM7809 estabilizan."}}},
+{t:"Escapa del laboratorio",r(i){const st=v(i,"st")||0;let h=`<p>Estás encerrado. Resuelve los retos en orden: cada uno alimenta al siguiente.</p>`;R9.forEach((r,j)=>{const lock=j>st;h+=`<div class="card${lock?" lock":""}"><b>${r[0]}</b><div class="row"><input type="text" inputmode="decimal" data-k="r${j}" value="${v(i,"r"+j)||""}" aria-label="Respuesta reto ${j+1}" size="6"${j<st||S.res[i]?" disabled":""}><button class="btn g" data-act="r9" data-j="${j}"${j<st||S.res[i]?" disabled":""}>Verificar</button><button class="btn g" data-act="h9" data-j="${j}"${S.res[i]?" disabled":""}>Pista</button></div><div id="m9${j}">${j<st?`<span class="ok">✓ ${r[3]}</span>`:(v(i,"h"+j)?`<span class="mu">${r[2]}</span>`:"")}</div></div>`});
+ h+=`<div class="card${st<4?" lock":""}"><b>Puerta.</b> Código (4 dígitos) y contraseña: el componente que «no es más que un grifo».<div class="row"><input type="text" inputmode="numeric" maxlength="4" data-k="cod" value="${v(i,"cod")||""}" placeholder="Código" size="6"${lk(i)}><input type="text" data-k="pw" value="${v(i,"pw")||""}" placeholder="Contraseña"${lk(i)}></div><div class="mu">Verificación: los cuatro dígitos suman 22.</div></div>`;return h},
+ c(i){const st=v(i,"st")||0,cod=(v(i,"cod")||"").trim(),pw=(v(i,"pw")||"").trim().toLowerCase();const a=cod=="1984",b=pw=="transistor";const s=Math.max(0,(st+(a?1:0)+(b?1:0)-.03*S.h[i]*1)/6);
+  return{s:Math.min(1,s),fb:`Retos superados: ${st}/4 · Código 1984: <b class="${a?"ok":"bad"}">${a?"correcto":"incorrecto"}</b> · Contraseña TRANSISTOR: <b class="${b?"ok":"bad"}">${b?"correcta":"incorrecta"}</b> · Pistas usadas: ${S.h[i]}.<br>${R9.map(r=>r[3]).join("<br>")}<br>1+9+8+4 = 22. El transistor actúa como grifo: la base regula el paso entre colector y emisor.`}}},
+{t:"¿Quién tiene la razón?",r(i){return `<p>Is = 4 mA entra a R1 = 100 Ω y R2 = 300 Ω en paralelo.</p><svg viewBox="0 0 260 110" width="260" role="img" aria-label="Fuente de corriente de 4 mA con R1 y R2 en paralelo"><g fill="none" stroke="#eaf1fb" stroke-width="2"><path d="M20 20H240M20 90H240M20 20V40M20 70V90M120 20V35M120 75V90M220 20V35M220 75V90"/><circle cx="20" cy="55" r="15"/><rect x="108" y="35" width="24" height="40"/><rect x="208" y="35" width="24" height="40"/></g><text x="12" y="59" fill="#f0a05a" font-size="11">Is</text><text x="138" y="60" fill="#eaf1fb" font-size="12">R1</text><text x="170" y="60" fill="#eaf1fb" font-size="12">R2</text></svg>
+ <h3>1. ¿Quién tiene la razón?</h3><div class="pers">`+P10.map((p,n)=>`<label class="o"><input type="radio" name="p10" data-k="who" value="${n}"${v(i,"who")==n?" checked":""}${lk(i)}> <b>${p[0]}:</b> ${p[1]}</label>`).join("")+`</div><h3>2. Demuéstralo (divisor de corriente)</h3><div class="row mono">I₁ = <input type="text" data-k="i1" size="5" value="${v(i,"i1")||""}"${lk(i)}> mA &nbsp; I₂ = <input type="text" data-k="i2" size="5" value="${v(i,"i2")||""}"${lk(i)}> mA</div><h3>3. Convence a un compañero</h3><div class="row">Dirigido a ${sel(i,"to",P10.filter((p,n)=>n!=2).map(p=>p[0]))}</div><textarea rows="3" data-k="msg" placeholder="Máximo tres líneas, como un chat"${lk(i)}>${v(i,"msg")||""}</textarea><h3>4. ¿Qué tan seguro estás?</h3><div class="row">`+["1. Lo adiviné","2. Poco seguro","3. Seguro","4. Totalmente seguro"].map((t,n)=>`<label><input type="radio" name="conf" data-k="conf" value="${n}"${v(i,"conf")==n?" checked":""}${lk(i)}> ${t}</label>`).join("")+`</div>`},
+ c(i){const w=v(i,"who")==2,a=Math.abs(num(v(i,"i1"))-3)<.01&&Math.abs(num(v(i,"i2"))-1)<.01,m=(v(i,"msg")||"").trim().length>=20,c=v(i,"conf")!==undefined;
+  return{s:((w?1:0)+(a?1:0)+(m?1:0)+(c?1:0))/4,fb:`Respuesta: <b>Carla</b> (${w?"✓":"✗"}). Cálculo (${a?"✓":"✗"}): I₁ = 4·300/400 = 3 mA; I₂ = 4·100/400 = 1 mA; 3+1 = 4 mA = Is. Mensaje (${m?"completo":"muy corto"}). Autoevaluación (${c?"registrada":"pendiente"}).<br>${P10.map(p=>`<b>${p[0]}:</b> ${p[2]}`).join("<br>")}<br>Si tu confianza fue alta y fallaste, revisa el concepto: es la señal más útil para estudiar.`}}}
+];
+function render(){const i=S.cur;$("#q").innerHTML=`<h2>${i+1}. ${Q[i].t}</h2>`+Q[i].r(i)+(S.res[i]?`<div class="fb"><b>Puntaje: ${(S.res[i].s).toFixed(2)} / 1</b><br>${S.res[i].fb}</div>`:"");
+ $("#nav").innerHTML=Q.map((q,n)=>`<button class="${n==i?"cur ":""}${S.res[n]?"done":""}" data-n="${n}" aria-label="Pregunta ${n+1}${S.res[n]?" comprobada":""}">${n+1}</button>`).join("");
+ const d=S.res.filter(Boolean).length;$("#prog").textContent=d+" / 10 comprobadas";$("#pb").style.width=d*10+"%";$("#chk").disabled=!!S.res[i];$("#prev").disabled=!i;$("#next").disabled=i==9;$("#mode").textContent=S.rev?"consulta":"evaluación"}
+function check(i){if(S.res[i])return;S.res[i]=Q[i].c(i)}
+function results(){for(let i=0;i<10;i++)check(i);const tot=S.res.reduce((a,r)=>a+r.s,0);
+ $("#res").innerHTML=`<div class="card"><h2>Resultados</h2><p style="font-size:1.6rem"><b>${tot.toFixed(2)} / 10</b> (${Math.round(tot*10)} %)</p><table>${Q.map((q,n)=>`<tr><td>${n+1}. ${q.t}</td><td>${S.res[n].s.toFixed(2)}</td><td><button class="btn g" data-n="${n}" data-rev="1">Revisar</button></td></tr>`).join("")}</table><div class="row"><button class="btn" id="again">Repetir el cuestionario</button><button class="btn g" id="mine">Ver mis intentos</button><button class="btn g" id="retry" hidden>Reintentar guardado</button></div><div class="fb" id="sv" role="status"></div><div id="hist"></div></div>`;render();$("#res").scrollIntoView();save()}
+document.addEventListener("input",e=>{const k=e.target.dataset?.k;if(k!==undefined){S.a[S.cur][k]=e.target.value}});
+document.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const d=b.dataset;
+ if(b.id=="go")$("#gate").scrollIntoView();
+ else if(b.id=="start")start();else if(b.id=="retry")save();else if(b.id=="mine")mine();
+ else if(b.id=="chk"){check(S.cur);render()}
+ else if(b.id=="prev"){S.cur--;render()}else if(b.id=="next"){S.cur++;render()}
+ else if(b.id=="fin")results();
+ else if(b.id=="again"){S.a=Array.from({length:10},()=>({}));S.res.fill(null);S.h.fill(0);S.cur=0;S.rev=false;AID=crypto.randomUUID();SAVED=false;SMSG="";$("#res").innerHTML="";render();$("#lab").scrollIntoView()}
+ else if(d.n!==undefined){S.cur=+d.n;if(d.rev)S.rev=true;render();if(d.rev)$("#q").scrollIntoView()}
+ else if(d.act=="r9"){const j=+d.j,a=S.a[8],st=a.st||0;if(j!=st)return;const x=num(a["r"+j]);const m=$("#m9"+j);if(x===R9[j][1]){a.st=st+1;render()}else m.innerHTML=`<span class="bad">${isNaN(x)?"Escribe un número.":"Ese dígito no coincide; revisa el cálculo."}</span>`}
+ else if(d.act=="h9"){const j=+d.j;if(!S.a[8]["h"+j]){S.a[8]["h"+j]=1;S.h[8]++}render()}});
+let sb,NAME="",AID=crypto.randomUUID(),SAVED=false,SMSG="",saving=false;
+function start(){const n=$("#nm").value.trim();if(!n){$("#ne").textContent="Escribe tu nombre para continuar.";$("#nm").focus();return}
+ NAME=n.slice(0,80);$("#who").textContent="Estudiante: "+NAME;$("#gate").hidden=true;$("#lab").hidden=false;$("#lab").scrollIntoView()}
+async function cli(){if(sb)return sb;const c=await(await fetch("/api/config")).json();if(!c.url||!c.anon)throw new Error("servidor sin configurar");
+ const x=supabase.createClient(c.url,c.anon);let{data:{session}}=await x.auth.getSession();
+ if(!session){const{error}=await x.auth.signInAnonymously();if(error)throw error}sb=x;return x}
+async function save(){const el=$("#sv"),rb=$("#retry");if(saving)return;if(SAVED){el.innerHTML=SMSG;return}
+ saving=true;rb.hidden=true;el.textContent="Guardando tu resultado…";
+ try{const c=await cli(),{data:{session}}=await c.auth.getSession();
+  const r=await fetch("/api/submit",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+session.access_token},body:JSON.stringify({id:AID,nombre:NAME,respuestas:S.a,pistas:S.h[8]})});
+  let j={};try{j=await r.json()}catch{}if(!r.ok)throw new Error(j.error||"HTTP "+r.status);
+  SAVED=true;SMSG=`<b class="ok">✓ Resultado guardado.</b> Puntaje confirmado por el servidor: <b>${+j.puntaje} / 10</b> (${+j.porcentaje} %), ${+j.correctas} preguntas con puntaje completo.`;el.innerHTML=SMSG}
+ catch(e){el.textContent="No se pudo guardar tu resultado ("+e.message+"). Revisa tu conexión y reintenta; tus respuestas siguen aquí.";el.className="fb bad";rb.hidden=false}
+ saving=false}
+async function mine(){const h=$("#hist");try{const c=await cli(),{data,error}=await c.from("resultados").select("puntaje,porcentaje,finalizado_en").order("finalizado_en",{ascending:false});if(error)throw error;
+ h.innerHTML=data.length?`<table>${data.map(r=>`<tr><td>${new Date(r.finalizado_en).toLocaleString("es-CO")}</td><td>${+r.puntaje} / 10</td><td>${+r.porcentaje} %</td></tr>`).join("")}</table>`:'<p class="mu">Aún no hay intentos guardados.</p>'}
+ catch(e){h.textContent="No se pudieron cargar tus intentos: "+e.message}}
+render();
+</script></body></html>

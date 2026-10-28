@@ -1,0 +1,37 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ElectroLab · Panel</title>
+<meta name="robots" content="noindex">
+<style>:root{--bg:#10294a;--pn:#173760;--ink:#eaf1fb;--mu:#a9bdd8;--cu:#f0a05a;--ln:#3f68a0;--bad:#ff8c8c;color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,sans-serif;padding:20px}
+.w{max-width:1000px;margin:0 auto}.card{background:var(--pn);border:1px solid var(--ln);border-radius:10px;padding:16px;margin:12px 0}
+input,select{background:#0c1f39;color:var(--ink);border:1px solid var(--ln);border-radius:6px;padding:7px;font:inherit}
+button{background:var(--cu);color:#1b1206;border:0;border-radius:6px;padding:9px 16px;font:600 1rem inherit;cursor:pointer}
+button.g{background:transparent;color:var(--ink);border:1px solid var(--ln)}:focus-visible{outline:3px solid var(--cu)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.st{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.st b{font-size:1.6rem;display:block}
+table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--ln);padding:6px;text-align:left}.bad{color:var(--bad)}.mu{color:var(--mu)}.tw{overflow-x:auto}</style></head>
+<body><div class="w"><h1>ElectroLab · Panel de la docente</h1>
+<form id="lf" class="card"><div class="row"><input id="em" type="email" placeholder="Correo" aria-label="Correo" autocomplete="username" required><input id="pw" type="password" placeholder="Contraseña" aria-label="Contraseña" autocomplete="current-password" required><button>Iniciar sesión</button></div><p id="le" class="bad" role="alert"></p></form>
+<div id="pn" hidden><div class="st card"><div><b id="s1">–</b>Intentos</div><div><b id="s2">–</b>Promedio</div><div><b id="s3">–</b>Mejor puntaje</div></div>
+<div class="card"><div class="row"><input id="q" placeholder="Buscar por nombre" aria-label="Buscar por nombre"><select id="o" aria-label="Orden"><option value="f">Más recientes</option><option value="p">Mayor puntaje</option><option value="n">Nombre</option></select><button class="g" id="csv">Exportar CSV</button><button class="g" id="out">Cerrar sesión</button></div>
+<div class="tw"><table><thead><tr><th>Nombre</th><th>Puntaje</th><th>%</th><th>Aciertos</th><th>Fecha</th></tr></thead><tbody id="tb"></tbody></table></div><p id="msg" class="mu" role="status"></p></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+const $=s=>document.querySelector(s);let sb,D=[];
+async function init(){const c=await(await fetch("/api/config")).json();sb=supabase.createClient(c.url,c.anon);const{data:{session}}=await sb.auth.getSession();if(session)gate(session)}
+function gate(s){// La barrera real es RLS; esto solo evita mostrar una interfaz vacía.
+ if(s.user.app_metadata?.role!=="admin"){$("#le").textContent="Esta cuenta no tiene permisos de administrador.";sb.auth.signOut();return}
+ $("#lf").hidden=true;$("#pn").hidden=false;load()}
+async function load(){$("#msg").textContent="Cargando…";const{data,error}=await sb.from("resultados").select("nombre,puntaje,porcentaje,correctas,finalizado_en").order("finalizado_en",{ascending:false});
+ if(error){$("#msg").textContent="Error al cargar: "+error.message;return}D=data;draw()}
+function draw(){const q=$("#q").value.toLowerCase(),o=$("#o").value;let r=D.filter(x=>x.nombre.toLowerCase().includes(q));
+ r.sort((a,b)=>o=="p"?b.puntaje-a.puntaje:o=="n"?a.nombre.localeCompare(b.nombre):new Date(b.finalizado_en)-new Date(a.finalizado_en));
+ $("#s1").textContent=D.length;$("#s2").textContent=D.length?(D.reduce((a,x)=>a+ +x.puntaje,0)/D.length).toFixed(2):"–";$("#s3").textContent=D.length?Math.max(...D.map(x=>+x.puntaje)):"–";
+ const tb=$("#tb");tb.replaceChildren(...r.map(x=>{const tr=document.createElement("tr");[x.nombre,x.puntaje+" / 10",x.porcentaje+" %",x.correctas+" / 10",new Date(x.finalizado_en).toLocaleString("es-CO")].forEach(t=>{const td=document.createElement("td");td.textContent=t;tr.append(td)});return tr}));
+ $("#msg").textContent=r.length?"":"No hay resultados para mostrar."; window.V=r}
+$("#lf").onsubmit=async e=>{e.preventDefault();$("#le").textContent="";const{data,error}=await sb.auth.signInWithPassword({email:$("#em").value,password:$("#pw").value});
+ if(error)$("#le").textContent="No se pudo iniciar sesión: "+error.message;else gate(data.session)};
+$("#q").oninput=draw;$("#o").onchange=draw;$("#out").onclick=async()=>{await sb.auth.signOut();location.reload()};
+$("#csv").onclick=()=>{const c=v=>{v=String(v);if(/^[=+\-@\t\r]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"'};
+ const L=[["Nombre","Puntaje","Porcentaje","Aciertos","Fecha"],...(window.V||[]).map(x=>[x.nombre,x.puntaje,x.porcentaje,x.correctas,x.finalizado_en])].map(r=>r.map(c).join(",")).join("\n");
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+L],{type:"text/csv"}));a.download="resultados_electrolab.csv";a.click()};
+init().catch(e=>$("#le").textContent="Servidor sin configurar: "+e.message);
+</script></body></html>
